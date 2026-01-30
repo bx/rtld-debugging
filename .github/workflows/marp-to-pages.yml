@@ -58,7 +58,7 @@ jobs:
           MARP_USER: root:root
 
       - name: Copy images directory (if exists)
-        run: if [[ -dz slides/img ]]; then cp -R slides/img build/slides/img; fi
+        run: if [[ -d slides/img ]]; then cp -R slides/img build/slides/img; fi
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
