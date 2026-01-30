@@ -24,9 +24,6 @@ jobs:
       - name: Ensure build dir exists
         run: mkdir -p build
 
-      - name: Copy images directory (if exists)
-        run: if [[ -d slides/img ]]; then cp -R img build/img; fi
-
       - name: Marp Build (README)
         uses: docker://marpteam/marp-cli:v3.0.2
         with:
@@ -59,6 +56,9 @@ jobs:
           args: -I slides/ -o build/slides/
         env:
           MARP_USER: root:root
+
+      - name: Copy images directory (if exists)
+        run: if [[ -dz slides/img ]]; then cp -R slides/img build/slides/img; fi
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
