@@ -7,7 +7,8 @@ ENV VERSION=$VERSION
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
          curl build-essential openssl wget gzip gdb gawk \
-         bison python-is-python3 gettext texinfo && \
+         bison python-is-python3 python3-pyelftools gettext \
+         texinfo && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -41,14 +42,19 @@ RUN ../glibc/configure -q \
     make install
 
 COPY --chown=user:user testcase /workspace/testcase
-COPY --chown=user:user debug-ld.sh hook-exec-main.py /workspace/
-
+COPY --chown=user:user scripts/debug-ld.sh scripts/hook-exec-main.py scripts/build-and-debug.sh /workspace/
+COPY --chown=user:user scripts/rtld-debug /workspace/rtld-debug
 ENV LIBC_PREFIX=/build/local
 ENV LIBC_SRC=/build/glibc
 ENV GLIBC_VERSION=$VERSION
 
 WORKDIR /workspace/testcase
 RUN make
+
+WORKDIR /workspace/rtld-debug
+RUN CFLAGS="-I $LIBC_PREFIX/include" make
+
 WORKDIR /workspace
+
 
 CMD [ "/bin/bash" ]

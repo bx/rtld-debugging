@@ -38,3 +38,13 @@ If you execute `make sh` with a VOLUME environmental variable set, it will spawn
 a container with the directory at VOLUME mounted to /workspace/mnt , e.g.,
 
 `VOLUME=$HOME/some_directory make sh`
+
+# CS 69.16 Basics of Reverse Engineering lecture
+
+raw slides in ./slides
+sample binaries in ./samples
+./samples/patch.py was used to generate samples from pre-built binaries
+
+If you have docker setup, you can run `make ld-samples` to spawn a docker container and run a sample within a gdb shell with an instrumented ld.so .  After running `make ld-samples`, you can run gdb via, e.g., `./debug-ld.sh samples/hello-world`
+
+Once you have gdb running, you can inspect the executable's symbol and relocation tables in memory via our custom `elf` gdb command -- either `elf sym` or `elf rel`

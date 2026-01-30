@@ -10,14 +10,19 @@ class LoadExecutableSymbols(gdb.Breakpoint):
     def stop(self):
         self.enabled = False
         run_args = gdb.parameter("args")
-        binname = run_args.split()[-1]
-        mappings = gdb.execute("info proc mappings", to_string=True)
+        binname = None
         startaddr = None
-        for m in mappings.split("\n"):
-            if m.strip().endswith(f" {binname}"):
-                # first column is start address
-                startaddr = m.split()[0]
-                break
+        if len(run_args) > 2:
+            binname = run_args.split()[2]
+
+        if binname:
+            mappings = gdb.execute("info proc mappings", to_string=True)
+
+            for m in mappings.split("\n"):
+                if m.strip().endswith(f" {binname}"):
+                    # first column is start address
+                    startaddr = m.split()[0]
+                    break
         # load symbols from ELF executable
         if startaddr:
             gdb.execute(f"add-symbol-file {binname} -o {startaddr}")
@@ -37,9 +42,9 @@ class LoadExecutableSymbols(gdb.Breakpoint):
                 gdb.execute(f"break *0x{startint:x}")
 
         else:
-            print("Could not locate binary {binname} in memory map in order to load symbols")
+            print(f"Could not locate binary {binname} in memory map in order to load symbols")
             print("Try using `info proc mappings` to lookup the base address of the executable")
-            print("and then load the symbols using: `add-symbol-file {binname} -o <start address>`")
+            print(f"and then load the symbols using: `add-symbol-file {binname} -o <start address>`")
             return True
 
 
