@@ -49,6 +49,11 @@ jobs:
         id: slides-folder-exists
         run: bash -c "[[ -d slides ]] ; echo \"has_slides=\$?\" >> \"$GITHUB_OUTPUT\""
 
+      - name: Copy images directory (if exists)
+        if: steps.slides-folder-exists.outputs.has_slides == '0'
+        run: if [[ -d slides/img ]]; then mkdir -p build/slides && cp -R slides/img build/slides/img; fi
+
+
       - name: Marp Build (slides folder, if exists)
         if: steps.slides-folder-exists.outputs.has_slides == '0'
         uses: docker://marpteam/marp-cli:v3.0.2
@@ -57,8 +62,6 @@ jobs:
         env:
           MARP_USER: root:root
 
-      - name: Copy images directory (if exists)
-        run: if [[ -d slides/img ]]; then cp -R slides/img build/img; fi
 
       - name: Deploy preview
         if: ${{ github.event_name == 'pull_request' }}
