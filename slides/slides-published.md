@@ -65,13 +65,14 @@ if relocation type is ...
 - `R_X86_64_COPY` ↦ **is like a memcpy**
   - `memcpy(base + r.r_offset, s.st_value, s.st_size)`
 - `R_X86_64_64` ↦ **indirect move (+ addend)**
-  - `*(base + r.r_offset) = base + s.st_value + r.r_addend
+  - `*(base + r.r_offset) = base + s.st_value + r.r_addend`
     - applies to most symbol types
   - `*(base + r.r_offset) = s.st_value + r.r_addend`
     - if symbol has `st_shndx` value of 0xfff1
-    - 0xfff1 means `SHN_ABS, symbol should be treated as an "absolute" value and not affected by relocation
+    - 0xfff1 means `SHN_ABS`, symbol should be treated as an "absolute" value and not affected by relocation
 - `R_X86_64_RELATIVE` ↦ **a direct move (+ addend)**
   - `*(base + r.r_offset) = (r.r_addend + base)`
+
 ---
 #  How?
 - [https://github.com/bx/rtld-debugging](https://github.com/bx/rtld-debugging) to debug the runtime loader
